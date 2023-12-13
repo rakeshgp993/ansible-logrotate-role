@@ -1,0 +1,19 @@
+---
+- name: verify
+  hosts: instance
+  gather_facts: false
+  tasks:
+    - name: crontab details
+      register: env
+      shell: |
+        crontab -l
+
+    - name: debug crontab 
+      debug:
+        msg: |
+          {{ env.stdout }}
+
+    - name: assert crontab 
+      assert:
+        that:
+        - " 'logrotate server error logs' in env.stdout"

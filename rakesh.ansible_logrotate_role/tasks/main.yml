@@ -1,0 +1,48 @@
+---
+- name: Ensures cron(ie) installed
+  yum: name=cronie state=present
+  tags: cronie
+
+- name: create logroate config path ({{ wl_script_path }})
+  file:
+   path: "{{ wl_script_path }}/"
+   state: directory
+   group: "{{ user_group }}"
+   mode: "0750"
+
+- name: create logroate config path at ({{ wl_script_path }})
+  file:
+   path: "{{ wl_script_path }}/logrotate"
+   state: directory
+   group: "{{ user_group }}"
+   mode: "0750"
+
+- name: create logroate conf file at ({{ wl_script_path }}/logrotate)
+  template:
+   src: logrotate.conf.j2
+   dest: "{{ wl_script_path }}/logrotate/logrotate-{{ domain_name }}.conf"
+   group: "{{ user_group }}"
+   mode: "0750"
+
+##- name: create logroate status file at ({{ wl_script_path }}/logrotate)
+##  file:
+##  #  src: logrotate.status.j2
+##  #  dest: "{{ wl_script_path }}/logrotate/logrotate-{{ domain_name }}.status"
+##   path: "{{ wl_script_path }}/logrotate/logrotate-{{ domain_name }}.status"
+##   state: touch
+##   group: "{{ user_group }}"
+##   mode: "0750"
+
+- name: create logroate conf file at ({{ wl_script_path }}/logrotate)
+  template:
+   src: logrotate.status.j2
+   dest: "{{ wl_script_path }}/logrotate/logrotate-{{ domain_name }}.status"
+   group: "{{ user_group }}"
+   mode: "0750"
+     
+- name: cronjob to logrotate log files
+  cron:
+   name: logrotate server error logs for "{{ domain_name }}"
+   hour: "*/4"
+   job: "/usr/sbin/logrotate -s {{ wl_script_path }}/logrotate/logrotate-{{ domain_name }}.status {{ wl_script_path }}/logrotate/logrotate-{{ domain_name }}.conf"
+   state: present

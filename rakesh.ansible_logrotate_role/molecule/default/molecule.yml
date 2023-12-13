@@ -1,0 +1,35 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    #image: richxsl/rhel7:latest
+    image: geerlingguy/docker-centos7-ansible:latest
+    volumes:
+      #- /var/run/docker.sock:/var/run/docker.sock
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+verifier:
+ name: ansible
+lint: 
+  ansible-lint
+scenario:
+  name: default
+  test_sequence:
+  - dependency
+  #- lint
+  - cleanup
+  - destroy
+  - create
+  - prepare
+  - converge
+  - idempotence
+  - verify
+  - cleanup
+  - destroy
+role_name_check: 1

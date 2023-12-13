@@ -1,0 +1,10 @@
+{% for server in wl_server -%}
+ {{ wl_server_log_path }}/{{ server.name }}/{{ server.name }}.err
+{% endfor %}
+{
+    size 5m
+    rotate 7
+    copytruncate
+    missingok
+    compress
+}

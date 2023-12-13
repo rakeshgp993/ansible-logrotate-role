@@ -1,0 +1,7 @@
+wl_script_path: /u01/script
+user_group: root
+domain_name: SRV1
+wl_server: 
+  - name: "Srv01"
+  - name: "Srv02"
+wl_server_log_path: /u01/logs
